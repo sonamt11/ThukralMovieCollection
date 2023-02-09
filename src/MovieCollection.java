@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class MovieCollection {
   private ArrayList<Movie> movies;
@@ -159,6 +160,20 @@ public class MovieCollection {
     }
   }
 
+  private void sortCast(ArrayList<Movie> listToSort) {
+    for (int j = 1; j < listToSort.size(); j++) {
+      Movie temp = listToSort.get(j);
+      String tempCast = temp.getCast();
+
+      int possibleIndex = j;
+      while (possibleIndex > 0 && tempCast.compareTo(listToSort.get(possibleIndex - 1).getCast()) < 0) {
+        listToSort.set(possibleIndex, listToSort.get(possibleIndex - 1));
+        possibleIndex--;
+      }
+      listToSort.set(possibleIndex, temp);
+    }
+  }
+
   private void displayMovieInfo(Movie movie) {
     System.out.println();
     System.out.println("Title: " + movie.getTitle());
@@ -228,15 +243,25 @@ public class MovieCollection {
 
     for (int i = 0; i < movies.size(); i++) {
       String movieCast = movies.get(i).getCast().toLowerCase();
-      movieCast.split("\\|");
       movieCast = movieCast.toLowerCase();
 
-      if (movieCast.indexOf(searchTerm) != -1) {
-        results.add(movies.get(i));
+      String[] castMembers;
+      castMembers = movieCast.split("\\|");
+
+      ArrayList<String> cast = new ArrayList<>(Arrays.asList(castMembers));
+
+      ArrayList<String> uniqueMovieCast = new ArrayList<>();
+
+      for (int j = 0; j < cast.size(); j++) {
+        if (cast.indexOf(cast.get(j)) == -1) {
+          uniqueMovieCast.add(cast.get(j));
+        }
       }
+      System.out.println(uniqueMovieCast);
     }
+
     if (results.size() > 0) {
-      sortResults(results);
+      sortCast(results);
 
       for (int i = 0; i < results.size(); i++) {
         String castName = results.get(i).getCast();
